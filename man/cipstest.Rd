@@ -14,22 +14,22 @@ cipstest(
 )
 }
 \arguments{
-\item{x}{an object of class \code{"pseries"},}
+\item{x}{an object of class `"pseries"`,}
 
 \item{lags}{lag order for Dickey-Fuller augmentation,}
 
-\item{type}{one of \code{"trend"}, \code{"drift"}, \code{"none"},}
+\item{type}{one of `"trend"`, `"drift"`, `"none"`,}
 
-\item{model}{one of \code{"cmg"}, \code{"mg"}, \code{"dmg"},}
+\item{model}{one of `"cmg"`, `"mg"`, `"dmg"`,}
 
 \item{truncated}{logical specifying whether to calculate the
 truncated version of the test,}
 
-\item{\dots}{further arguments passed to \code{critvals.cips}
+\item{\dots}{further arguments passed to `critvals.cips`
 (non-exported function).}
 }
 \value{
-An object of class \code{"htest"}.
+An object of class `"htest"`.
 }
 \description{
 Cross-sectionally augmented Im, Pesaran and Shin (IPS) test for
@@ -37,12 +37,13 @@ unit roots in panel models.
 }
 \details{
 This cross-sectionally augmented version of the IPS unit root test
-(H0: the \code{pseries} has a unit root) is a so-called
+(H0: the `pseries` has a unit root) is a so-called
 second-generation panel unit root test: it is in fact robust
 against cross-sectional dependence, provided that the default
-\code{type="cmg"} is calculated. Else one can obtain the standard
-(\code{model="mg"}) or cross-sectionally demeaned (\code{model="dmg"})
+`type="cmg"` is calculated. Else one can obtain the standard
+(`model="mg"`) or cross-sectionally demeaned (`model="dmg"`)
 versions of the IPS test.
+The critical values and p-values are interpolated from the tables by Pesaran (2007). If the computed statistic is outside the tables, then a warning message is generated.
 }
 \examples{
 
@@ -56,7 +57,7 @@ cipstest(Produc$gsp, type = "trend")
 \insertRef{pes07}{plm}
 }
 \seealso{
-\code{\link[=purtest]{purtest()}}
+[purtest()]
 }
 \author{
 Giovanni Millo

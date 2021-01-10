@@ -30,6 +30,7 @@
 #' `type="cmg"` is calculated. Else one can obtain the standard
 #' (`model="mg"`) or cross-sectionally demeaned (`model="dmg"`)
 #' versions of the IPS test.
+#' The critical values and p-values are interpolated from the tables by Pesaran (2007). If the computed statistic is outside the tables, then a warning message is generated.
 #' 
 # TODO: maybe be more verbose here? write about type arg which corresponds
 # cases III, II, I in Pesaran (2007) etc.
@@ -505,14 +506,29 @@ critvals.cips <- function(stat, n, T., type=c("trend", "drift", "none"),
   
   ## find intervals for current n and T.
   nintl <- findInterval(n, rnam)
-  ninth <- nintl+1
+  if(nintl < dim(cvals)[1]){
+    ninth <- nintl+1
+    large_n <- FALSE
+  } else {
+    warning("The computed statistics are outside the table becaus of large `n`.")
+    ninth <- nintl
+    large_n <- TRUE
+  }
   nintv <- rnam[nintl:ninth]
   tintl <- findInterval(T., cnam)
-  tinth <- tintl+1
+  if(tintl < dim(cvals)[2]){
+    tinth <- tintl+1
+    large_t <- FALSE
+  } else {
+    warning("The computed statistics are outside the table because of large `T`.")
+    tinth <- tintl
+    large_t <- TRUE
+  }
   tintv <- cnam[tintl:tinth]
   
   ## for each critical value
   cv <- numeric(3)
+  
   for(i in 1:3) {
     
     ## on N dim
@@ -521,29 +537,37 @@ critvals.cips <- function(stat, n, T., type=c("trend", "drift", "none"),
       tl <- cvals[which(rnam == n), tintl, i]
       th <- cvals[which(rnam == n), tinth, i]
       
-    } else {
+    } else if(!large_n){
       ## interpolate interval of interest to get cvals(n,T.)
       tl <- approx(nintv, cvals[nintl:ninth, tintl, i],
                    n = max(nintv) - min(nintv))$y[n - min(nintv)]
       th <- approx(nintv, cvals[nintl:ninth, tinth, i],
                    n = max(nintv) - min(nintv))$y[n - min(nintv)]
+    } else {
+      tl <- cvals[nintl, tintl, i]
+      th <- cvals[ninth, tinth, i]
     }
-    
     ## on T. dim
     if(T. %in% cnam) {
       ## if T. is exactly one of the tabulated values:
       if(n %in% rnam) {
         ## ... and n too:
         cv[i] <- cvals[which(rnam == n), which(cnam == T.), i]
-      } else {
+      } else if(!large_n){
         ## or if n is not, interpolate n on T.'s exact row:
         cv[i] <- approx(nintv, cvals[nintl:ninth, which(cnam == T.), i],
                         n = max(nintv) - min(nintv))$y[n - min(nintv)]
+      } else {
+        cv[i] <- cvals[dim(cvals)[1], which(cnam == T.), i]
       }
     } else {
       ## idem: interpolate T.-interval to get critical value
-      cv[i] <- approx(tintv, c(tl, th),
-                      n = max(tintv) - min(tintv))$y[T. - min(tintv)]
+      if(!large_t){
+        cv[i] <- approx(tintv, c(tl, th),
+                        n = max(tintv) - min(tintv))$y[T. - min(tintv)]
+      } else {
+        cv[i] <- th
+      }
     }
   }
   
