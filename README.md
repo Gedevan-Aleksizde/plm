@@ -15,7 +15,7 @@ and so on.
 ## how to install
 
 ```r
-remotes::install_github("Gedevan-Aleksidze/plm@cipstest-index-error")
+remotes::install_github("Gedevan-Aleksizde/plm")
 ```
 
 I modified only [R/test_cips.R](R/test_cips.R)
